@@ -1,0 +1,75 @@
+#!/bin/bash
+clear
+# Function to print usage information
+usage() {
+    echo "Usage: $0 -o <operation> -n <number1> <number2> ... [-d]"
+    echo "Options:"
+    echo "  -o <operation>: Specify the operation to perform (+, -, *, %)"
+    echo "  -n <number1> <number2> ...: Specify a sequence of numbers"
+    echo "  -d: Enable debug mode"
+    exit 1
+}
+
+# Parse command line arguments
+while getopts ":o:n:d" opt; do
+    case $opt in
+        o)
+            operation="$OPTARG"
+            ;;
+        n)
+            numbers=($OPTARG)
+            ;;
+        d)
+            debug=true
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG" >&2
+            usage
+            ;;
+        :)
+            echo "Option -$OPTARG requires an argument." >&2
+            usage
+            ;;
+    esac
+done
+
+# Check if all required options are provided
+if [[ -z "$operation" || ${#numbers[@]} -eq 0 ]]; then
+    echo "Missing required options." >&2
+    usage
+fi
+
+# Get additional information for debug mode
+if [ "$debug" = true ]; then
+    user=$(whoami)
+    script_name=$(basename "$0")
+fi
+
+# Perform the operation
+result=${numbers[0]}
+for ((i=1; i<${#numbers[@]}; i++)); do
+    case $operation in
+        +)
+            result=$((result + numbers[i]))
+            ;;
+        -)
+            result=$((result - numbers[i]))
+            ;;
+        *)
+            echo "Invalid operation: $operation" >&2
+            usage
+            ;;
+    esac
+done
+
+# Print additional information for debug mode
+if [ "$debug" = true ]; then
+    echo "User: $user"
+    echo "Script: $script_name"
+    echo "Operation: $operation"
+    echo "Numbers: ${numbers[@]}"
+fi
+
+# Print the result
+echo "Result: $result"
+

@@ -1,0 +1,11 @@
+#!/bin/bash
+echo "Date and time: $(date)"
+echo "Current User Name: $(uname)"
+echo "hostname: $(hostname)"
+echo "internal ip address: ip route get 1 | awk '{print $NF;exit}'"
+echo -e "Name and version of Linux distribution:\n $(sw_vers)" 
+echo "uptime: $(uptime)"
+echo "information about used and free space in / in GB: $(df -H / | awk 'NR==2 {print "Used:", $3, "Free:", $4}')"
+echo -e "information about total and free RAM: \n Total RAM: $((sysctl -n hw.memsize)/1024/1024/1024) GB \n Free RAM: $(((sysctl -n vm.page_size)*(vm_stat | grep "Pages free" | awk '{print $3}'))/1024/1024) GB "
+# echo "number of cpu cores: $(~/proc)"
+# echo "frequency of cpu cores: $(~/cat/proc/cpuinfo | grep -E "cpu MHz" | awk 'print $4')"
