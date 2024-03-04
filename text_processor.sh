@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Function to display usage instructions
+
 usage() {
     echo "Usage: $0 [-v] [-s <A_WORD> <B_WORD>] [-r] [-l] [-u] -i <input_file> -o <output_file>"
     echo "-v: Swap case (convert lowercase to uppercase and vice versa)"
@@ -13,7 +13,7 @@ usage() {
     exit 1
 }
 
-# Variables to store options' arguments
+
 _swap_case=false
 _substitute=""
 _reverse=false
@@ -22,7 +22,7 @@ _to_upper=false
 _input_file=""
 _output_file=""
 
-# Parsing options
+
 while getopts ":vs:rlui:o:" opt; do
     case ${opt} in
         v)
@@ -64,20 +64,20 @@ while getopts ":vs:rlui:o:" opt; do
     esac
 done
 
-# Check if mandatory options are provided
+
 if [ -z "$_input_file" ] || [ -z "$_output_file" ]; then
     echo "Input and output files are required." 1>&2
     usage
 fi
 
-# Read input file
+
 if [ ! -f "$_input_file" ]; then
     echo "Input file '$_input_file' not found." 1>&2
     usage
 fi
 text=$(<"$_input_file")
 
-# Swap case
+
 if $_swap_case; then
     swapped_text=""
     for (( i=0; i<${#text}; i++ )); do
@@ -92,29 +92,29 @@ if $_swap_case; then
     text="$swapped_text"
 fi
 
-# Substitute words
+
 if [ -n "$_substitute" ]; then
     old_word=$(echo "$_substitute" | awk '{print $1}')
     new_word=$(echo "$_substitute" | awk '{print $2}')
     text=$(echo "$text" | sed "s/$old_word/$new_word/g")
 fi
 
-# Reverse text lines
+
 if $_reverse; then
     text=$(echo "$text" | awk '{ lines[NR] = $0 } END { for (i=NR; i>=1; i--) print lines[i] }')
 fi
 
-# Convert text to lowercase
+
 if $_to_lower; then
     text=$(echo "$text" | tr '[:upper:]' '[:lower:]')
 fi
 
-# Convert text to uppercase
+
 if $_to_upper; then
     text=$(echo "$text" | tr '[:lower:]' '[:upper:]')
 fi
 
-# Write output to file
+
 echo "$text" > "$_output_file"
 
 echo "Output written to $_output_file"
